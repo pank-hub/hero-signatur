@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Oppsett av e-post signatur</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: auto;
+            display: flex;
+            flex-direction: row;
+        }
+        .form-container {
+            width: 50%;
+        }
+        .signature-container {
+            width: 50%;
+            padding-left: 20px;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+        input[type="text"], input[type="email"] {
+            width: 90%;
+            padding: 8px;
+            margin-top: 5px;
+            box-sizing: border-box;
+        }
+        .logo-selection {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 10px;
+            margin-bottom: 20px;
+        }
+        .logo-option {
+            display: flex;
+            align-items: center;
+        }
+        .logo-option img {
+            margin-left: 5px;
+            width: 115px;
+            height: 20px;
+        }
+        .signature-preview {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-top: 20px;
+        }
+        #generateButton {
+            margin-top: 20px;
+            padding: 10px 15px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        #generateButton:hover {
+            background-color: #0056b3;
+        }
+        img.logo {
+            width: 230px;
+            height: 40px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Form on the left -->
+        <div class="form-container">
+            <h2>Oppsett av e-post signatur</h2>
+
+            <form id="signatureForm">
+                <label for="name">Navn:</label>
+                <input type="text" id="name" required>
+
+                <label for="title">Yrkestittel:</label>
+                <input type="text" id="title" required>
+
+                <label for="department">Arbeidssted (eksempel: «Stavanger mottakssenter»):</label>
+                <input type="text" id="department" placeholder="Hopp over denne hvis du jobber i sentraladministrasjon">
+
+                <label for="jobPhone">Telefonnummer (Jobb):</label>
+                <input type="text" id="jobPhone">
+
+                <label for="mobilePhone">Mobil (Privat):</label>
+                <input type="text" id="mobilePhone">
+
+                <label for="vaktPhone">Vakttelefon:</label>
+                <input type="text" id="vaktPhone">
+
+                <label for="email">E-postadresse:</label>
+                <input type="email" id="email" required>
+
+                <label>Velg Logo:</label>
+
+                <div class="logo-selection">
+                    <div class="logo-option">
+                        <input type="radio" id="logo1" name="logo" value="logo1" checked>
+                        <img src="Hero_logo.jpg" alt="Hero Logo 1">
+                    </div>
+                    <div class="logo-option">
+                        <input type="radio" id="logo2" name="logo" value="logo2">
+                        <img src="Hero_mottak.jpg" alt="Hero Mottak Logo">
+                    </div>
+                    <div class="logo-option">
+                        <input type="radio" id="logo3" name="logo" value="logo3">
+                        <img src="Hero_tolk.jpg" alt="Hero Tolk Logo">
+                    </div>
+                </div>
+
+                <button type="button" id="generateButton" onclick="generateSignature()">Generer Signatur</button>
+            </form>
+        </div>
+
+        <!-- Signature preview on the right -->
+        <div class="signature-container">
+            <div id="signaturePreview" class="signature-preview"></div>
+            <p style="font-style: italic; color: #666;">
+                Velg signaturen og kopier den manuelt (Ctrl + C) for å lime den inn i Outlook.
+            </p>
+            <p>
+                For veiledning om hvordan du legger til en e-postsignatur i Outlook, se denne <a href="https://support.microsoft.com/nb-no/office/opprett-og-legge-til-en-e-postsignatur-i-outlook-8ee5d4f4-68fd-464a-a1c1-0e1c80bb27f2#PickTab=New_Outlook" target="_blank">tutorialen</a>.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        function generateSignature() {
+            const name = document.getElementById("name").value.trim();
+            const title = document.getElementById("title").value.trim();
+            const department = document.getElementById("department").value.trim();
+            let jobPhone = document.getElementById("jobPhone").value.trim();
+            let mobilePhone = document.getElementById("mobilePhone").value.trim();
+            let vaktPhone = document.getElementById("vaktPhone").value.trim();
+            const email = document.getElementById("email").value.trim();
+            const company = "Hero Norge"; // Fixed company name
+
+            // Get the selected logo
+            const selectedLogo = document.querySelector('input[name="logo"]:checked').value;
+            let logoHTML = "";
+
+            // Check which logo is selected and use the corresponding image
+            if (selectedLogo === "logo1") {
+                logoHTML = '<img class="logo" src="Hero_logo.jpg" alt="Hero Logo">';
+            } else if (selectedLogo === "logo2") {
+                logoHTML = '<img class="logo" src="Hero_mottak.jpg" alt="Hero Mottak Logo">';
+            } else if (selectedLogo === "logo3") {
+                logoHTML = '<img class="logo" src="Hero_tolk.jpg" alt="Hero Tolk Logo">';
+            }
+
+            // Check if department is empty or not
+            let departmentAndCompany = department ? `${department}, ${company}` : `${company}`;
+
+            // Format and validate phone numbers
+            let formattedJobPhone = jobPhone ? formatPhoneNumber(jobPhone) : null;
+            let formattedMobilePhone = mobilePhone ? formatPhoneNumber(mobilePhone) : null;
+            let formattedVaktPhone = vaktPhone ? formatPhoneNumber(vaktPhone) : null;
+
+            // Build the phone number lines conditionally
+            let phoneLines = '';
+            if (formattedJobPhone) phoneLines += `${formattedJobPhone}<br>`;
+            if (formattedMobilePhone) phoneLines += `${formattedMobilePhone} (Privat)<br>`;
+            if (formattedVaktPhone) phoneLines += `${formattedVaktPhone} (Vakttelefon)<br>`;
+
+            // Signature HTML content
+            const signatureHTML = `
+                <span style="font-family: Arial; font-size: 10pt; color: #575756;">
+                    Med vennlig hilsen,
+                </span><br><br>
+                <span style="font-family: Arial; font-size: 12pt; font-weight: bold; color: #8B1C93;">
+                    ${name}
+                </span><br>
+                <span style="font-family: Arial; font-size: 10pt; color: #575756;">
+                    ${title}<br>
+                    ${departmentAndCompany}<br><br>
+                    ${phoneLines}
+                    ${email}<br>
+                    hero.no<br>
+                </span>
+                ${logoHTML}
+            `;
+
+            // Display the signature preview
+            document.getElementById("signaturePreview").innerHTML = signatureHTML;
+        }
+
+        function formatPhoneNumber(phone) {
+            // Remove any non-digit characters
+            let cleaned = phone.replace(/\D/g, '');
+
+            // Check if phone number has exactly 8 digits
+            if (cleaned.length === 8) {
+                // Format phone number as +47 xxx xx xxx
+                return `+47 ${cleaned.slice(0, 3)} ${cleaned.slice(3, 5)} ${cleaned.slice(5)}`;
+            } else {
+                return null; // Invalid phone number length
+            }
+        }
+    </script>
+</body>
+</html>
