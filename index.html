@@ -31,6 +31,12 @@
             margin-top: 5px;
             box-sizing: border-box;
         }
+        .note-inline {
+            font-size: 0.9em;
+            font-style: italic;
+            color: #666;
+            margin-left: 5px;
+        }
         .logo-selection {
             display: flex;
             align-items: center;
@@ -89,13 +95,13 @@
                 <label for="department">Arbeidssted (eksempel: «Stavanger mottakssenter»):</label>
                 <input type="text" id="department" placeholder="Hopp over denne hvis du jobber i sentraladministrasjon">
 
-                <label for="jobPhone">Telefonnummer (Jobb):<i>Uten landskode</i></label>
+                <label for="jobPhone">Telefonnummer (Jobb): <span class="note-inline">Uten landskode</span></label>
                 <input type="text" id="jobPhone">
 
-                <label for="mobilePhone">Mobil (Privat):</label>
+                <label for="mobilePhone">Mobil (Privat): <span class="note-inline">Uten landskode</span></label>
                 <input type="text" id="mobilePhone">
 
-                <label for="vaktPhone">Vakttelefon:</label>
+                <label for="vaktPhone">Vakttelefon: <span class="note-inline">Uten landskode</span></label>
                 <input type="text" id="vaktPhone">
 
                 <label for="email">E-postadresse:</label>
